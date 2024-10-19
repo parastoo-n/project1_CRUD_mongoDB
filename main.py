@@ -13,6 +13,21 @@ win.title('CRUD')
 win.iconbitmap('icons/python_18894.ico')
 win.configure(background='#914d4d')
 
+
+#def
+
+def changeButtonStyleWithHoverRegister(e):
+    btnRegister.configure(fg='#a18282',background='white')
+    
+def changeButtonStyleWithHoverToSelfRegister(e):
+     btnRegister.configure(fg='white',background='#a18282')
+
+def ActiveBtn(e):
+    if txtName.get()!= '' and txtFamily.get() != '' and comboBoxField.get() != '' and txtAge.get() != '':
+        btnRegister.configure(state=NORMAL)
+    else: 
+        btnRegister.configure(state=DISABLED)  
+
 #TXTbox
 txtName=Entry(win,width=15,bd=5,font=('arial',15,'bold'),bg='#a18282',fg='white',textvariable=Name,justify='center')
 txtName.bind('<KeyRelease>',ActiveBtn)
