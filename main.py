@@ -164,6 +164,15 @@ def Update(Oldperson,Newperson):
        newData={'$set':Newperson} 
        persons.update_one(Oldperson,newData)
 
+def FindData(Data):
+    alldata=ReadData()
+    for data in alldata:
+        if data['name'] == Data['name'] and data['family'] == Data['family'] and data['field'] == Data['field'] and data['age'] == Data['age']:
+            return data
+    return False
+
+       
+
 
 
 #Texvariable     
@@ -249,6 +258,6 @@ for i in range(len(columns)):
 table.bind('<Button-1>',Selection)
 table.place(x=400,y=100)
 
-
+Load()
 
 win.mainloop()
