@@ -22,6 +22,13 @@ def changeButtonStyleWithHoverRegister(e):
 def changeButtonStyleWithHoverToSelfRegister(e):
      btnRegister.configure(fg='white',background='#a18282')
 
+def changeButtonStyleWithHoverSearch(e):
+    btnSearch.configure(fg='#a18282',background='white')
+    
+def changeButtonStyleWithHoverToSelfSearch(e):
+     btnSearch.configure(fg='white',background='#a18282') 
+
+
 def OnClickRegister(e):
     if btnRegister.cget('state')==NORMAL:
        try: 
@@ -41,7 +48,7 @@ def OnClickRegister(e):
        except:
             messagebox.showerror("error","you must enter a number in the age field")
 
-    def Register(person):
+def Register(person):
     if person['age']>=18:
        persons.insert_one(person)
    
@@ -69,6 +76,38 @@ def ActiveBtn(e):
     else: 
         btnRegister.configure(state=DISABLED)
 
+def OnClickSearch(e):
+    searchRequestUser=txtSearch.get()
+    if searchRequestUser=='':
+        CleanTable()
+        Load()
+    else:    
+        result=search(searchRequestUser)
+        CleanTable()
+        for data in result:
+            InsertDataToTable(data)
+
+def search(searchRequestUser):
+    resultSearch=[]
+    allData=ReadData()
+    for data in allData:
+        if data['name'] == searchRequestUser or data['family'] == searchRequestUser or data['field'] == searchRequestUser or str(data['age']) == searchRequestUser :
+           resultSearch.append(data)   
+    return resultSearch
+
+def Load():
+    alldata=ReadData()
+    for data in alldata:
+     InsertDataToTable(data) 
+
+
+#Texvariable     
+Name=StringVar()
+Family=StringVar()
+# Field=StringVar() 
+Age=StringVar() 
+Search=StringVar() 
+
 
 #TXTbox
 txtName=Entry(win,width=15,bd=5,font=('arial',15,'bold'),bg='#a18282',fg='white',textvariable=Name,justify='center')
@@ -79,14 +118,17 @@ txtFamily=Entry(win,width=15,bd=5,font=('arial',15,'bold'),bg='#a18282',fg='whit
 txtFamily.bind('<KeyRelease>',ActiveBtn)
 txtFamily.place(x=100,y=160)
 
-txtField=Entry(win,width=15,bd=5,font=('arial',15,'bold'),bg='#a18282',fg='white',textvariable=Field,justify='center')
-txtField.bind('<KeyRelease>',ActiveBtn)
-txtField.place(x=100,y=220)
-
+comboBoxField=ttk.Combobox(win,width=15,font=('arial',12,'bold'),foreground='white',background='#a18282')
+comboBoxField.place(x=100,y=220)
+comboBoxField['values']=['computer','electronic','chemistry','physicsgit']
 
 txtAge=Entry(win,width=15,bd=5,font=('arial',15,'bold'),bg='#a18282',fg='white',textvariable=Age,justify='center')
 txtAge.bind('<KeyRelease>',ActiveBtn)
 txtAge.place(x=100,y=280)
+
+txtSearch=Entry(win,width=20,bd=5,font=('arial',15,'bold'),bg='#a18282',fg='white',textvariable=Search,justify='center')
+txtSearch.place(x=550,y=50)
+
 
 #LBL
 lblName=Label(win,text='Name',font=('arial',12,'bold'),bg='#a18282',fg='white')
@@ -115,6 +157,17 @@ btnSearch.bind('<Enter>',changeButtonStyleWithHoverSearch)
 btnSearch.bind('<Leave>',changeButtonStyleWithHoverToSelfSearch)
 btnSearch.bind('<Button-1>',OnClickSearch)
 btnSearch.place(x=400,y=50)
+
+#table
+
+columns=('Name','Family','Field','Age')
+table=ttk.Treeview(win,columns=columns,show='headings')
+for i in range(len(columns)):
+    table.heading(columns[i],text=columns[i])
+    table.column(columns[i],width=100,anchor='center')
+table.bind('<Button-1>',Selection)
+table.place(x=400,y=100)
+
 
 
 win.mainloop()
