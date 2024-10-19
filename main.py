@@ -22,11 +22,53 @@ def changeButtonStyleWithHoverRegister(e):
 def changeButtonStyleWithHoverToSelfRegister(e):
      btnRegister.configure(fg='white',background='#a18282')
 
+def OnClickRegister(e):
+    if btnRegister.cget('state')==NORMAL:
+       try: 
+
+            person={'name':txtName.get(),'family':txtFamily.get(),'field':comboBoxField.get(),'age':int(txtAge.get())}
+            if Exist(person)==False:
+               Register(person)
+            #    allData=ReadData()
+               CleanTable()
+            #    for data in allData:
+            #        InsertDataToTable(data)
+               Load()
+               CleanTextBoxAfterUseCrud()
+               messagebox.showinfo("success","your registration is complete")
+            else:
+                messagebox.showerror("error","you have already registered")
+       except:
+            messagebox.showerror("error","you must enter a number in the age field")
+
+    def Register(person):
+    if person['age']>=18:
+       persons.insert_one(person)
+   
+def ReadData():
+    AllData=persons.find()
+    return AllData 
+# ReadData() 
+def InsertDataToTable(person):
+    table.insert('','end',values=[person['name'],person['family'],person['field'],person['age']])
+
+def CleanTable():
+    for item in table.get_children():
+        table.delete(item)
+
+def CleanTextBoxAfterUseCrud():
+        Name.set('')
+        Family.set('')
+        # Field.set('')
+        Age.set('')
+        txtName.focus_set()             
+
 def ActiveBtn(e):
     if txtName.get()!= '' and txtFamily.get() != '' and comboBoxField.get() != '' and txtAge.get() != '':
         btnRegister.configure(state=NORMAL)
     else: 
-        btnRegister.configure(state=DISABLED)  
+        btnRegister.configure(state=DISABLED)
+
 
 #TXTbox
 txtName=Entry(win,width=15,bd=5,font=('arial',15,'bold'),bg='#a18282',fg='white',textvariable=Name,justify='center')
@@ -68,6 +110,11 @@ btnRegister.bind('<Leave>',changeButtonStyleWithHoverToSelfRegister)
 btnRegister.bind('<Button-1>',OnClickRegister)
 btnRegister.place(x=125,y=350)
 
+btnSearch=Button(win,text='search',width=10,font=('arial',12,'bold'),bg='#a18282',fg='white')
+btnSearch.bind('<Enter>',changeButtonStyleWithHoverSearch)
+btnSearch.bind('<Leave>',changeButtonStyleWithHoverToSelfSearch)
+btnSearch.bind('<Button-1>',OnClickSearch)
+btnSearch.place(x=400,y=50)
 
 
 win.mainloop()
