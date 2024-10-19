@@ -28,6 +28,19 @@ def changeButtonStyleWithHoverSearch(e):
 def changeButtonStyleWithHoverToSelfSearch(e):
      btnSearch.configure(fg='white',background='#a18282') 
 
+def changeButtonStyleWithHover(e):
+     if e.widget['text']=='Delete':
+        btnDelete.configure(fg='white',background='#D00A0A')
+     elif e.widget['taxt']== 'Update':
+          btnUpdate.configure(fg='#a18282',background='white')
+
+    
+def changeButtonStyleWithHoverToSelf(e):
+    if e.widget['text']=='Delete':
+        btnDelete.configure(fg='white',background='red')
+    elif e.widget['taxt']== 'Update':
+          btnUpdate.configure(fg='white',background='#a18282')     
+
 
 def OnClickRegister(e):
     if btnRegister.cget('state')==NORMAL:
@@ -76,6 +89,13 @@ def ActiveBtn(e):
     else: 
         btnRegister.configure(state=DISABLED)
 
+def Exist(person):
+    allData=ReadData()
+    for data in allData:
+        if data['name'] == person['name'] and data['family'] == person['family'] and data['field'] == person['field'] and data['age'] == person['age']:
+            return True
+    return False        
+
 def OnClickSearch(e):
     searchRequestUser=txtSearch.get()
     if searchRequestUser=='':
@@ -98,7 +118,52 @@ def search(searchRequestUser):
 def Load():
     alldata=ReadData()
     for data in alldata:
-     InsertDataToTable(data) 
+     InsertDataToTable(data)
+
+def OnClickDelete(e):
+    dialog=messagebox.askyesno('Delete Data','Are you sure you want to delete your data?')
+    if dialog:
+       select=table.selection()
+       if select !=():
+          Data=table.item(select)['values']
+          person={'name':Data[0],'family':Data[1],'field':Data[2],'age':int(Data[3])}
+          Delete(person)
+          table.delete(select)
+
+
+def Delete(person):
+    result=FindData(person)
+    if result !=False:
+        persons.delete_one(person)
+
+
+def Selection(e):
+    select=table.selection()
+    if select !=():
+      data=table.item(select)['values']
+      Name.set(data[0])
+      Family.set(data[1])
+      comboBoxField.set(data[2])
+      Age.set(data[3])
+
+def OnClickUpdate(e):
+   dialog=messagebox.askyesno('Update Data','Are you sure you want to update your data?')
+   if dialog:
+       select=table.selection()
+       if select !=():
+          Data=table.item(select)['values']
+          Oldperson={'name':Data[0],'family':Data[1],'field':Data[2],'age':int(Data[3])}
+          Newperson={'name':txtName.get(), 'family':txtFamily.get(),'field':comboBoxField.get(),'age':int(txtAge.get())}
+          Update(Oldperson,Newperson)
+          CleanTable()
+          Load()
+
+def Update(Oldperson,Newperson):
+    result=FindData(Oldperson)
+    if result != False:
+       newData={'$set':Newperson} 
+       persons.update_one(Oldperson,newData)
+
 
 
 #Texvariable     
@@ -158,25 +223,30 @@ btnSearch.bind('<Leave>',changeButtonStyleWithHoverToSelfSearch)
 btnSearch.bind('<Button-1>',OnClickSearch)
 btnSearch.place(x=400,y=50)
 
+btnDelete=Button(win,text='Delete',width=9,font=('arial',12,'bold'),bg='red',fg='white')
+btnDelete.bind('<Enter>',changeButtonStyleWithHover)
+btnDelete.bind('<Leave>',changeButtonStyleWithHoverToSelf)
+btnDelete.bind('<Button-1>',OnClickDelete)
+btnDelete.place(x=700 ,y=330)
+
+
+btnUpdate=Button(win,text='Update',width=9,font=('arial',12,'bold'),bg='#a18282',fg='white')
+btnUpdate.bind('<Enter>',changeButtonStyleWithHover)
+btnUpdate.bind('<Leave>',changeButtonStyleWithHoverToSelf)
+btnUpdate.bind('<Button-1>',OnClickUpdate)
+btnUpdate.place(x=400 ,y=330)
+
+
+
 #table
 
-table=ttk.Treeview(win,columns=('name','family','field','age'),show='headings')
-table.heading('name',text='Name')
-table.heading('family',text='Family')
-table.heading('field',text='Field')
-table.heading('age',text='Age')
-table.column('name',width=100)
-table.column('family',width=100)
-table.column('field',width=100)
-table.column('age',width=100)
 
-
-# columns=('Name','Family','Field','Age')
-# table=ttk.Treeview(win,columns=columns,show='headings')
-# for i in range(len(columns)):
-#     table.heading(columns[i],text=columns[i])
-#     table.column(columns[i],width=100,anchor='center')
-# table.bind('<Button-1>',Selection)
+columns=('Name','Family','Field','Age')
+table=ttk.Treeview(win,columns=columns,show='headings')
+for i in range(len(columns)):
+    table.heading(columns[i],text=columns[i])
+    table.column(columns[i],width=100,anchor='center')
+table.bind('<Button-1>',Selection)
 table.place(x=400,y=100)
 
 
