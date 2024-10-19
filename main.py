@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from tkinter import ttk 
 from tkinter import messagebox 
 Client = MongoClient('localhost',27017)
-db=Client['CRUD']
+db=Client['project1_CRUD_mongoDB']
 persons=db['persons1']
 
 win=Tk()
