@@ -160,12 +160,23 @@ btnSearch.place(x=400,y=50)
 
 #table
 
-columns=('Name','Family','Field','Age')
-table=ttk.Treeview(win,columns=columns,show='headings')
-for i in range(len(columns)):
-    table.heading(columns[i],text=columns[i])
-    table.column(columns[i],width=100,anchor='center')
-table.bind('<Button-1>',Selection)
+table=ttk.Treeview(win,columns=('name','family','field','age'),show='headings')
+table.heading('name',text='Name')
+table.heading('family',text='Family')
+table.heading('field',text='Field')
+table.heading('age',text='Age')
+table.column('name',width=100)
+table.column('family',width=100)
+table.column('field',width=100)
+table.column('age',width=100)
+
+
+# columns=('Name','Family','Field','Age')
+# table=ttk.Treeview(win,columns=columns,show='headings')
+# for i in range(len(columns)):
+#     table.heading(columns[i],text=columns[i])
+#     table.column(columns[i],width=100,anchor='center')
+# table.bind('<Button-1>',Selection)
 table.place(x=400,y=100)
 
 
